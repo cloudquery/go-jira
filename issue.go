@@ -1212,8 +1212,8 @@ func (s *IssueService) Search(jql string, options *SearchOptions) ([]Issue, *Res
 // SearchV3JQL will search for tickets according to the jql for Jira Cloud
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-get
-func (s *IssueService) SearchV3JQL(jql string, options *SearchOptions) ([]Issue, *Response, error) {
-	return s.SearchWithContext(context.Background(), jql, options)
+func (s *IssueService) SearchV3JQL(jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
+	return s.SearchV3JQLWithContext(context.Background(), jql, options)
 }
 
 func (s *IssueService) SearchV3JQLWithContext(ctx context.Context, jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
@@ -1267,7 +1267,7 @@ func (s *IssueService) SearchV3JQLWithContext(ctx context.Context, jql string, o
 
 	u.RawQuery = uv.Encode()
 
-	req, err := s.client.NewRequest(ctx, http.MethodGet, u.String(), nil)
+	req, err := s.client.NewRequestWithContext(ctx, http.MethodGet, u.String(), nil)
 	if err != nil {
 		return []Issue{}, nil, err
 	}
@@ -1446,12 +1446,12 @@ func (s *IssueService) DoTransitionWithPayload(ticketID, payload interface{}) (*
 //  * metaProject should contain metaInformation about the project where the issue should be created.
 //  * metaIssuetype is the MetaInformation about the Issuetype that needs to be created.
 //  * fieldsConfig is a key->value pair where key represents the name of the field as seen in the UI
-//		And value is the string value for that particular key.
+//             And value is the string value for that particular key.
 // Note: This method doesn't verify that the fieldsConfig is complete with mandatory fields. The fieldsConfig is
-//		 supposed to be already verified with MetaIssueType.CheckCompleteAndAvailable. It will however return
-//		 error if the key is not found.
-//		 All values will be packed into Unknowns. This is much convenient. If the struct fields needs to be
-//		 configured as well, marshalling and unmarshalling will set the proper fields.
+//              supposed to be already verified with MetaIssueType.CheckCompleteAndAvailable. It will however return
+//              error if the key is not found.
+//              All values will be packed into Unknowns. This is much convenient. If the struct fields needs to be
+//              configured as well, marshalling and unmarshalling will set the proper fields.
 func InitIssueWithMetaAndFields(metaProject *MetaProject, metaIssuetype *MetaIssueType, fieldsConfig map[string]string) (*Issue, error) {
 	issue := new(Issue)
 	issueFields := new(IssueFields)
