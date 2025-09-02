@@ -527,11 +527,11 @@ type SearchOptions struct {
 	ValidateQuery string `url:"validateQuery,omitempty"`
 }
 
-// SearchOptionsV3 specifies the parameters for the Jira Cloud-specific
+// SearchOptionsV2 specifies the parameters for the Jira Cloud-specific
 // paramaters to List methods that support pagination
 //
 // Docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-get
-type SearchOptionsV3 struct {
+type SearchOptionsV2 struct {
 	// NextPageToken: The token for a page to fetch that is not the first page.
 	// The first page has a nextPageToken of null.
 	// Use the nextPageToken to fetch the next page of issues.
@@ -595,7 +595,7 @@ type searchResult struct {
 
 // searchResult is only a small wrapper around the Jira Cloud-specific SearchV3 (with JQL) method
 // to be able to parse the results
-type searchResultV3 struct {
+type searchResultV2 struct {
 	// IsLast: Indicates whether this is the last page of the paginated response.
 	IsLast bool `json:"isLast" structs:"isLast"`
 	// Issues: The list of issues found by the search or reconsiliation.
@@ -1212,11 +1212,11 @@ func (s *IssueService) Search(jql string, options *SearchOptions) ([]Issue, *Res
 // SearchV3JQL will search for tickets according to the jql for Jira Cloud
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-get
-func (s *IssueService) SearchV2JQL(jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
+func (s *IssueService) SearchV2JQL(jql string, options *SearchOptionsV2) ([]Issue, *Response, error) {
 	return s.SearchV2JQLWithContext(context.Background(), jql, options)
 }
 
-func (s *IssueService) SearchV2JQLWithContext(ctx context.Context, jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
+func (s *IssueService) SearchV2JQLWithContext(ctx context.Context, jql string, options *SearchOptionsV2) ([]Issue, *Response, error) {
 	u := url.URL{
 		Path: "rest/api/2/search/jql",
 	}
@@ -1272,7 +1272,7 @@ func (s *IssueService) SearchV2JQLWithContext(ctx context.Context, jql string, o
 		return []Issue{}, nil, err
 	}
 
-	v := new(searchResultV3)
+	v := new(searchResultV2)
 	resp, err := s.client.Do(req, v)
 	if err != nil {
 		err = NewJiraError(resp, err)
