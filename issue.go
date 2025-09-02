@@ -1212,13 +1212,13 @@ func (s *IssueService) Search(jql string, options *SearchOptions) ([]Issue, *Res
 // SearchV3JQL will search for tickets according to the jql for Jira Cloud
 //
 // Jira API docs: https://developer.atlassian.com/cloud/jira/platform/rest/v3/api-group-issue-search/#api-rest-api-3-search-jql-get
-func (s *IssueService) SearchV3JQL(jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
-	return s.SearchV3JQLWithContext(context.Background(), jql, options)
+func (s *IssueService) SearchV2JQL(jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
+	return s.SearchV2JQLWithContext(context.Background(), jql, options)
 }
 
-func (s *IssueService) SearchV3JQLWithContext(ctx context.Context, jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
+func (s *IssueService) SearchV2JQLWithContext(ctx context.Context, jql string, options *SearchOptionsV3) ([]Issue, *Response, error) {
 	u := url.URL{
-		Path: "rest/api/3/search/jql",
+		Path: "rest/api/2/search/jql",
 	}
 	uv := url.Values{}
 	if jql != "" {
@@ -1280,7 +1280,6 @@ func (s *IssueService) SearchV3JQLWithContext(ctx context.Context, jql string, o
 
 	return v.Issues, resp, err
 }
-
 
 // SearchPagesWithContext will get issues from all pages in a search
 //
